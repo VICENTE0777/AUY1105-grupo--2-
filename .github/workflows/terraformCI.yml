@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - main
+      
+permissions:
+  contents: read   # solo lectura del código
+  pull-requests: write   # si necesitas comentar en PRs
 
 jobs:
   terraform-checks:
