@@ -10,5 +10,11 @@ vulnerabilidades, para cual debe utilizar la herramienta checkov.
 
 3.Validación terraform: Verificada la calidad y seguridad del código, finalmente se validará el código terraform, para lo cual debe utilizar el
 
-comando “terraform validate”. 
+comando “terraform validate”.
+
+
+
+
+
+se crea la rama test para verificar que mediante el pull request se activa el worflows
 
