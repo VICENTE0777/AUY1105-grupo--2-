@@ -2,31 +2,32 @@ name: Terraform CI
 
 on:
   pull_request:
+  push:
     branches:
       - main
+      - test
 
 jobs:
   terraform-checks:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
-      - name: Install TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
-      - name: Run TFLint
-        run: tflint --init && tflint
-
-      - name: Install Checkov
-        run: pip install checkov
-
-      - name: Run Checkov
-        run: checkov -d .
+      - name: Terraform Init
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
+
+      - name: TFLint
+        uses: terraform-linters/tflint-action@v4
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
