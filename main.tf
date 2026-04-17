@@ -1,4 +1,3 @@
-
 terraform {
   required_version = ">= 1.5.0"
 
@@ -9,6 +8,7 @@ terraform {
     }
   }
 }
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -21,10 +21,17 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+# KMS Key para cifrar CloudWatch Logs
+resource "aws_kms_key" "logs_key" {
+  description             = "KMS key for CloudWatch Logs"
+  deletion_window_in_days = 7
+}
+
 # CloudWatch Log Group para Flow Logs
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "vpc-flow-logs"
-  retention_in_days = 7
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.logs_key.arn
 }
 
 # Flow Logs para la VPC
@@ -79,9 +86,10 @@ resource "aws_security_group" "sg" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Salida solo a HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
