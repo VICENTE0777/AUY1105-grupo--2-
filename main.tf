@@ -1,18 +1,7 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-  required_version = ">= 1.5.0"
-}
-
 provider "aws" {
   region = "us-east-1"
 }
 
-# VPC
 resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
 
@@ -21,55 +10,34 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# Subred pública (SIN IP pública automática)
-resource "aws_subnet" "subnet_publica" {
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.1.1.0/24"
-  availability_zone       = "us-east-1a"
-  map_public_ip_on_launch = false
-
-  tags = {
-    Name = "AUY1105-duocapp-subnet-publica"
-  }
+# Flow Logs para la VPC
+resource "aws_flow_log" "vpc_flow" {
+  log_destination_type = "cloud-watch-logs"
+  log_group_name       = "vpc-flow-logs"
+  iam_role_arn         = aws_iam_role.vpc_flow_role.arn
+  vpc_id               = aws_vpc.vpc.id
 }
 
-# Security Group seguro
-resource "aws_security_group" "sg" {
-  name        = "AUY1105-duocapp-sg"
-  description = "Security group para acceso SSH restringido"
-  vpc_id      = aws_vpc.vpc.id
-
-  ingress {
-    description = "Allow SSH from my IP"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["179.60.64.62/32"]
-  }
-
-  # 🔐 Egress restringido (NO todo abierto)
-  egress {
-    description = "Allow HTTPS outbound"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "AUY1105-duocapp-sg"
-  }
+resource "aws_iam_role" "vpc_flow_role" {
+  name = "vpc-flow-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = {
+        Service = "vpc-flow-logs.amazonaws.com"
+      }
+    }]
+  })
 }
 
-# EC2 SIN IP pública
-resource "aws_instance" "ec2" {
-  ami                         = "ami-0fc5d935ebf8bc3bc"
-  instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.subnet_publica.id
-  vpc_security_group_ids      = [aws_security_group.sg.id]
-  associate_public_ip_address = false
+# Security Group por defecto restringido
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name = "AUY1105-duocapp-ec2"
-  }
+  ingress = []
+  egress  = []
 }
+
+resource "aws_subnet" "sub

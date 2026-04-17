@@ -7,6 +7,9 @@ on:
       - main
       - test
 
+permissions:
+  contents: read
+
 jobs:
   terraform-checks:
     runs-on: ubuntu-latest
