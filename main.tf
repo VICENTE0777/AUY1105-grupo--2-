@@ -21,34 +21,38 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# Subred pública
+# Subred pública (SIN IP pública automática)
 resource "aws_subnet" "subnet_publica" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.1.1.0/24"
-  availability_zone = "us-east-1a"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.1.1.0/24"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "AUY1105-duocapp-subnet-publica"
   }
 }
 
-# Security Group (solo SSH permitido desde tu IP)
+# Security Group seguro
 resource "aws_security_group" "sg" {
-  name   = "AUY1105-duocapp-sg"
-  vpc_id = aws_vpc.vpc.id
+  name        = "AUY1105-duocapp-sg"
+  description = "Security group para acceso SSH restringido"
+  vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    description = "SSH access"
+    description = "Allow SSH from my IP"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["179.60.64.62/32"]
   }
 
+  # 🔐 Egress restringido (NO todo abierto)
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Allow HTTPS outbound"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -57,12 +61,13 @@ resource "aws_security_group" "sg" {
   }
 }
 
-# EC2 Ubuntu 24.04 LTS
+# EC2 SIN IP pública
 resource "aws_instance" "ec2" {
-  ami           = "ami-0fc5d935ebf8bc3bc"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.subnet_publica.id
-  vpc_security_group_ids = [aws_security_group.sg.id]
+  ami                         = "ami-0fc5d935ebf8bc3bc"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.subnet_publica.id
+  vpc_security_group_ids      = [aws_security_group.sg.id]
+  associate_public_ip_address = false
 
   tags = {
     Name = "AUY1105-duocapp-ec2"
