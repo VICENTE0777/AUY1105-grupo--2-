@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0" # Última versión mayor estable
+      version = "~> 5.0"
     }
   }
   required_version = ">= 1.5.0"
@@ -13,34 +13,36 @@ provider "aws" {
 }
 
 # VPC
-resource "aws_vpc" "AUY1105-duocapp-vpc" {
+resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
+
   tags = {
     Name = "AUY1105-duocapp-vpc"
   }
 }
 
 # Subred pública
-resource "aws_subnet" "AUY1105-duocapp-subnet-publica" {
-  vpc_id            = aws_vpc.AUY1105-duocapp-vpc.id
+resource "aws_subnet" "subnet_publica" {
+  vpc_id            = aws_vpc.vpc.id
   cidr_block        = "10.1.1.0/24"
   availability_zone = "us-east-1a"
+
   tags = {
     Name = "AUY1105-duocapp-subnet-publica"
   }
 }
 
-# Security Group (solo SSH permitido)
-resource "aws_security_group" "AUY1105-duocapp-sg" {
-  vpc_id = aws_vpc.AUY1105-duocapp-vpc.id
+# Security Group (solo SSH permitido desde tu IP)
+resource "aws_security_group" "sg" {
   name   = "AUY1105-duocapp-sg"
+  vpc_id = aws_vpc.vpc.id
 
   ingress {
-    description = "SSH desde IP específica"
+    description = "SSH access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["X.X.X.X/32"] # Reemplazar con tu IP
+    cidr_blocks = ["179.60.64.62/32"]
   }
 
   egress {
@@ -55,12 +57,12 @@ resource "aws_security_group" "AUY1105-duocapp-sg" {
   }
 }
 
-# Instancia EC2 Ubuntu 24.04 LTS
-resource "aws_instance" "AUY1105-duocapp-ec2" {
-  ami           = "ami-0fc5d935ebf8bc3bc" # Ubuntu 24.04 LTS en us-east-1
+# EC2 Ubuntu 24.04 LTS
+resource "aws_instance" "ec2" {
+  ami           = "ami-0fc5d935ebf8bc3bc"
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.AUY1105-duocapp-subnet-publica.id
-  vpc_security_group_ids = [aws_security_group.AUY1105-duocapp-sg.id]
+  subnet_id     = aws_subnet.subnet_publica.id
+  vpc_security_group_ids = [aws_security_group.sg.id]
 
   tags = {
     Name = "AUY1105-duocapp-ec2"
