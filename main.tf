@@ -13,6 +13,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
 
@@ -25,6 +27,22 @@ resource "aws_vpc" "vpc" {
 resource "aws_kms_key" "logs_key" {
   description             = "KMS key for CloudWatch Logs"
   deletion_window_in_days = 7
+  enable_key_rotation     = true
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # CloudWatch Log Group para Flow Logs
@@ -34,14 +52,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   kms_key_id        = aws_kms_key.logs_key.arn
 }
 
-# Flow Logs para la VPC
-resource "aws_flow_log" "vpc_flow" {
-  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs.arn
-  log_destination_type = "cloud-watch-logs"
-  iam_role_arn         = aws_iam_role.vpc_flow_role.arn
-  vpc_id               = aws_vpc.vpc.id
-}
-
+# IAM Role para Flow Logs
 resource "aws_iam_role" "vpc_flow_role" {
   name = "vpc-flow-role"
   assume_role_policy = jsonencode({
@@ -56,9 +67,40 @@ resource "aws_iam_role" "vpc_flow_role" {
   })
 }
 
+# Policy para Flow Logs
+resource "aws_iam_role_policy" "vpc_flow_policy" {
+  name = "vpc-flow-policy"
+  role = aws_iam_role.vpc_flow_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Flow Logs
+resource "aws_flow_log" "vpc_flow" {
+  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  log_destination_type = "cloud-watch-logs"
+  iam_role_arn         = aws_iam_role.vpc_flow_role.arn
+  vpc_id               = aws_vpc.vpc.id
+}
+
 # Security Group por defecto restringido
 resource "aws_default_security_group" "default" {
-  vpc_id = aws_vpc.vpc.id
+  vpc_id  = aws_vpc.vpc.id
   ingress = []
   egress  = []
 }
@@ -82,7 +124,7 @@ resource "aws_security_group" "sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["179.60.64.62/32"] # tu IPv4 real
+    cidr_blocks = ["179.60.64.62/32"]
   }
 
   egress {
