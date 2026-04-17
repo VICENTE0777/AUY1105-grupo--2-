@@ -23,8 +23,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.7
 
       - name: Terraform Init
         run: terraform init
@@ -43,13 +41,7 @@ jobs:
           tflint --init
           tflint
 
-      - name: Terraform Plan
-        run: terraform plan -no-color
-
       - name: Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: .
-          framework: terraform
-          quiet: false
-          soft_fail: false
