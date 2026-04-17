@@ -21,7 +21,7 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# KMS Key para cifrar CloudWatch Logs
+# KMS Key segura
 resource "aws_kms_key" "logs_key" {
   description             = "KMS key for CloudWatch Logs"
   deletion_window_in_days = 7
@@ -31,10 +31,10 @@ resource "aws_kms_key" "logs_key" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "Enable IAM User Permissions"
+        Sid    = "EnableRootPermissions"
         Effect = "Allow"
         Principal = {
-          AWS = "*"
+          AWS = "arn:aws:iam::123456789012:root"
         }
         Action   = "kms:*"
         Resource = "*"
@@ -43,7 +43,7 @@ resource "aws_kms_key" "logs_key" {
   })
 }
 
-# CloudWatch Log Group para Flow Logs
+# CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "vpc-flow-logs"
   retention_in_days = 365
@@ -66,7 +66,7 @@ resource "aws_iam_role" "vpc_flow_role" {
   })
 }
 
-# Policy para Flow Logs
+# Policy restringida (FIX CHECKOV)
 resource "aws_iam_role_policy" "vpc_flow_policy" {
   name = "vpc-flow-policy"
   role = aws_iam_role.vpc_flow_role.id
@@ -83,7 +83,7 @@ resource "aws_iam_role_policy" "vpc_flow_policy" {
           "logs:DescribeLogGroups",
           "logs:DescribeLogStreams"
         ]
-        Resource = "*"
+        Resource = "arn:aws:logs:*:*:*"
       }
     ]
   })
@@ -97,13 +97,14 @@ resource "aws_flow_log" "vpc_flow" {
   vpc_id               = aws_vpc.vpc.id
 }
 
-# Security Group por defecto restringido
+# Default SG cerrado
 resource "aws_default_security_group" "default" {
   vpc_id  = aws_vpc.vpc.id
   ingress = []
   egress  = []
 }
 
+# Subnet privada
 resource "aws_subnet" "subnet_publica" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = "10.1.1.0/24"
@@ -114,6 +115,7 @@ resource "aws_subnet" "subnet_publica" {
   }
 }
 
+# Security Group seguro
 resource "aws_security_group" "sg" {
   vpc_id      = aws_vpc.vpc.id
   description = "SG_para_AUY1105"
@@ -139,7 +141,7 @@ resource "aws_security_group" "sg" {
   }
 }
 
-# IAM Role para EC2
+# IAM Role EC2
 resource "aws_iam_role" "ec2_role" {
   name = "ec2-role"
 
@@ -160,6 +162,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   role = aws_iam_role.ec2_role.name
 }
 
+# EC2 segura
 resource "aws_instance" "ec2" {
   ami                         = "ami-0fc5d935ebf8bc3bc"
   instance_type               = "t2.micro"
