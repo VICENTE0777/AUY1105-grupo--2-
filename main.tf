@@ -13,8 +13,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_caller_identity" "current" {}
-
 resource "aws_vpc" "vpc" {
   cidr_block = "10.1.0.0/16"
 
@@ -36,7 +34,7 @@ resource "aws_kms_key" "logs_key" {
         Sid    = "Enable IAM User Permissions"
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+          AWS = "*"
         }
         Action   = "kms:*"
         Resource = "*"
@@ -55,6 +53,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
 # IAM Role para Flow Logs
 resource "aws_iam_role" "vpc_flow_role" {
   name = "vpc-flow-role"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -143,6 +142,7 @@ resource "aws_security_group" "sg" {
 # IAM Role para EC2
 resource "aws_iam_role" "ec2_role" {
   name = "ec2-role"
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
