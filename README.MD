@@ -80,3 +80,43 @@ Automatiza la validación, reduciendo errores humanos.
 
 Facilita la colaboración y revisión de código en equipo.
 
+
+
+
+
+EXPLICACION main.tf
+
+
+
+Este código de infraestructura define los recursos básicos en AWS para el proyecto AUY1105-grupo--2-:
+
+
+
+Proveedor AWS: Se configura con la última versión mayor estable (~> 5.0).
+
+
+
+VPC: Red privada con bloque CIDR 10.1.0.0/16.
+
+
+
+Subred pública: Dentro de la VPC, con rango 10.1.1.0/24.
+
+
+
+Security Group: Permite únicamente tráfico entrante por SSH (puerto 22) desde una IP específica.
+
+
+
+Instancia EC2: Máquina virtual con Ubuntu 24.04 LTS, tipo t2.micro, asociada a la subred y al security group.
+
+
+
+🏷️ Nomenclatura de recursos
+
+Todos los recursos siguen el formato:
+
+<sigla-curso>-<nombre-aplicación>-<tipo-recurso>  
+
+Ejemplo: AUY1105-duocapp-vpc, AUY1105-duocapp-ec2.
+
