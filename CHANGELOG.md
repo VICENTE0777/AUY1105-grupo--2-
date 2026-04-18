@@ -13,6 +13,9 @@ El pipeline desarrollado tiene como objetivo asegurar la calidad, seguridad y va
 
 2. **Análisis de seguridad**
 
+comando “terraform validate”.
+
+se crea la rama test para verificar que mediante el pull request se activa el worflows
    * Se implementa la herramienta Checkov para identificar vulnerabilidades en la infraestructura como código.
    * Evalúa configuraciones inseguras, como reglas de red abiertas o malas prácticas en recursos AWS.
 
@@ -26,3 +29,8 @@ El pipeline desarrollado tiene como objetivo asegurar la calidad, seguridad y va
 * Se logra automatizar el control de calidad del proyecto.
 * Cada cambio en el repositorio es validado automáticamente, reduciendo errores en despliegues futuros.
 * Se mejora la seguridad y confiabilidad del código Terraform.
+
+se genera en push desde ramas alternas a main para probar el análisis desde la configuración del workflows, y visualizarla en GitHub, en la pestaña actions.
+>>>>>>> main
+
+se hacer pruebas con terraform validate para pasar el escaneo del script correctamente.
