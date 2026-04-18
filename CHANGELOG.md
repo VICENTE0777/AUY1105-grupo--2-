@@ -33,3 +33,4 @@ se crea la rama test para verificar que mediante el pull request se activa el wo
 se genera en push desde ramas alternas a main para probar el análisis desde la configuración del workflows, y visualizarla en GitHub, en la pestaña actions.
 >>>>>>> main
 
+se hacer pruebas con terraform validate para pasar el escaneo del script correctamente.
