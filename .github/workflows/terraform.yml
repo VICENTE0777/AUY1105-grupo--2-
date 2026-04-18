@@ -2,13 +2,18 @@ name: Terraform CI
 
 on:
   pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
       - fix-checkov
+      - test
+
 
 permissions:
   contents: read
+  pull-requests: write
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -41,7 +46,7 @@ jobs:
           tflint --init
           tflint
 
-      - name: Checkov
+      - name: Checkov Security Scan
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: .
