@@ -34,3 +34,5 @@ se genera en push desde ramas alternas a main para probar el análisis desde la 
 >>>>>>> main
 
 se hacer pruebas con terraform validate para pasar el escaneo del script correctamente.
+
+se agrega la carpeta fotos, y generamos un Markdown para nuestro readme

@@ -16,7 +16,7 @@ El workflow está dividido en tres etapas secuenciales:
 
 Análisis estático (TFLint)
 
-
+![TFLint](./fotos/tflint.png)
 
 Se instala y ejecuta la herramienta TFLint.
 
@@ -32,7 +32,7 @@ Análisis de seguridad (Checkov)
 
 Se instala y ejecuta Checkov sobre el repositorio.
 
-
+![Pip y Checkov](./fotos/pip_checkov.png)
 
 Objetivo: identificar vulnerabilidades y configuraciones inseguras en la infraestructura como código (IaC).
 
@@ -40,6 +40,8 @@ Objetivo: identificar vulnerabilidades y configuraciones inseguras en la infraes
 
 Validación de Terraform (terraform validate)
 
+
+![Terraform Init y Validate](./fotos/terraform_init_validate.png)
 
 
 Se ejecuta el comando terraform validate.
@@ -55,6 +57,8 @@ Objetivo: comprobar que la sintaxis y la configuración del código Terraform se
 El workflow solo se activa en pull requests hacia la rama main.
 
 
+![Pull Request](./fotos/pull_request.png)
+
 
 Cada etapa debe completarse correctamente antes de pasar a la siguiente.
 
@@ -62,7 +66,7 @@ Cada etapa debe completarse correctamente antes de pasar a la siguiente.
 
 Si alguna etapa falla, el pull request no podrá ser aprobado hasta que se corrijan los errores.
 
-
+![Pull Request 1](./fotos/pull_request1.png)
 
 ✅ Beneficios
 
@@ -81,7 +85,7 @@ Automatiza la validación, reduciendo errores humanos.
 Facilita la colaboración y revisión de código en equipo.
 
 
-
+![Actions Workflows](./fotos/actions-workflows.png)
 
 
 EXPLICACION main.tf
@@ -112,11 +116,17 @@ Instancia EC2: Máquina virtual con Ubuntu 24.04 LTS, tipo t2.micro, asociada a 
 
 
 
-🏷️ Nomenclatura de recursos
+definición main.tf 
 
-Todos los recursos siguen el formato:
+Red privada con controles estrictos.
 
-<sigla-curso>-<nombre-aplicación>-<tipo-recurso>  
+Logs cifrados y retenidos.
 
-Ejemplo: AUY1105-duocapp-vpc, AUY1105-duocapp-ec2.
+Roles IAM con privilegios mínimos.
+
+EC2 sin exposición pública y con cifrado.
+
+Es un diseño pensado para pasar validaciones de seguridad (TFLint, Checkov) y demostrar buenas prácticas de DevOps en AWS.
+
+![Diagrama Arquitectura AWS](./fotos/diagrama.png)
 
