@@ -57,6 +57,8 @@ Objetivo: comprobar que la sintaxis y la configuración del código Terraform se
 El workflow solo se activa en pull requests hacia la rama main.
 
 
+![Pull Request](./fotos/pull_request.png)
+
 
 Cada etapa debe completarse correctamente antes de pasar a la siguiente.
 
@@ -64,7 +66,7 @@ Cada etapa debe completarse correctamente antes de pasar a la siguiente.
 
 Si alguna etapa falla, el pull request no podrá ser aprobado hasta que se corrijan los errores.
 
-
+![Pull Request 1](./fotos/pull_request1.png)
 
 ✅ Beneficios
 
@@ -83,7 +85,7 @@ Automatiza la validación, reduciendo errores humanos.
 Facilita la colaboración y revisión de código en equipo.
 
 
-
+![Actions Workflows](./fotos/actions-workflows.png)
 
 
 EXPLICACION main.tf
