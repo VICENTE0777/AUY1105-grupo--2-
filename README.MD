@@ -120,3 +120,15 @@ Todos los recursos siguen el formato:
 
 Ejemplo: AUY1105-duocapp-vpc, AUY1105-duocapp-ec2.
 
+
+
+# Evidencias de Validación
+
+## TFLint
+![TFLint](./fotos/tflint.png)
+
+## Terraform Init y Validate
+![Terraform Init y Validate](./fotos/terraform init y validate.png)
+
+## Pip y Checkov
+![Pip y Checkov](./fotos/pip y checkov.png)
