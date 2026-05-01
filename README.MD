@@ -16,7 +16,7 @@ El workflow está dividido en tres etapas secuenciales:
 
 Análisis estático (TFLint)
 
-
+![TFLint](./fotos/tflint.png)
 
 Se instala y ejecuta la herramienta TFLint.
 
@@ -32,7 +32,7 @@ Análisis de seguridad (Checkov)
 
 Se instala y ejecuta Checkov sobre el repositorio.
 
-
+![Pip y Checkov](./fotos/pip_checkov.png)
 
 Objetivo: identificar vulnerabilidades y configuraciones inseguras en la infraestructura como código (IaC).
 
@@ -40,6 +40,8 @@ Objetivo: identificar vulnerabilidades y configuraciones inseguras en la infraes
 
 Validación de Terraform (terraform validate)
 
+
+![Terraform Init y Validate](./fotos/terraform_init_validate.png)
 
 
 Se ejecuta el comando terraform validate.
@@ -124,6 +126,6 @@ Ejemplo: AUY1105-duocapp-vpc, AUY1105-duocapp-ec2.
 
 # Evidencias de Validación
 
-![Terraform Init y Validate](./fotos/terraform_init_validate.png)
-![Pip y Checkov](./fotos/pip_checkov.png)
-![TFLint](./fotos/tflint.png)
+
+
+
